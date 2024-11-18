@@ -1,10 +1,7 @@
-import hashlib
-
+import pandas as pd
 import numpy as np
 
-# TODO: Write a function which creates a sample split based in some id_column and training_frac.
-# Optional: If the dtype of id_column is a string, we can use hashlib to get an integer representation.
-def create_sample_split(df, id_column, training_frac=0.8):
+def create_sample_split(df: pd.DataFrame, id_column: str, training_frac=0.8):
     """Create sample split based on ID column.
 
     Parameters
@@ -14,12 +11,19 @@ def create_sample_split(df, id_column, training_frac=0.8):
     id_column : str
         Name of ID column
     training_frac : float, optional
-        Fraction to use for training, by default 0.9
+        Fraction to use for training, by default 0.8
 
     Returns
     -------
     pd.DataFrame
         Training data with sample column containing train/test split based on IDs.
     """
-
+    unique_ids = df[id_column].unique()
+    print("Unique IDs:", unique_ids)  # Debug print
+    np.random.shuffle(unique_ids)
+    split_index = int(training_frac * len(unique_ids))
+    train_ids = set(unique_ids[:split_index])
+    print("Train IDs:", train_ids)  # Debug print
+    df['sample'] = df[id_column].apply(lambda x: 'train' if x in train_ids else 'test')
+    print(df.head())  # Debug print to show the updated DataFrame
     return df
